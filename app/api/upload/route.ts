@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { uploadToShelby } from '@/lib/shelby/client';
 
+// Use Edge Runtime for larger payload support (50MB limit instead of 4.5MB)
+export const runtime = 'edge';
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
@@ -22,6 +25,7 @@ export async function POST(request: NextRequest) {
     const blobName = `podcasts/${title.replace(/[^a-zA-Z0-9]/g, '_')}_${timestamp}.mp3`;
 
     console.log('Server: Starting Shelby upload...', blobName);
+    console.log('Server: File size:', file.size, 'bytes');
 
     // Upload to Shelby
     const result = await uploadToShelby(file, blobName);
