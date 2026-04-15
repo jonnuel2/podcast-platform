@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { WalletButton } from "./WalletButton";
 
 export function Navbar() {
   return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+    <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2">
             <Image
               src="/assets/images/logo.png"
               alt="Shel-PodVault"
@@ -18,21 +20,31 @@ export function Navbar() {
             />
           </Link>
 
+          {/* Navigation Links */}
           <div className="hidden md:flex items-center gap-8">
-            <Link href="/browse" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">
+            <Link
+              href="/browse"
+              className="text-gray-700 hover:text-orange-600 font-semibold transition-colors"
+            >
               Browse Podcasts
             </Link>
-            <Link href="/creator" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">
+            <Link
+              href="/creator"
+              className="text-gray-700 hover:text-orange-600 font-semibold transition-colors"
+            >
               For Creators
             </Link>
-            <Link href="/listener" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">
+            <Link
+              href="/listener"
+              className="text-gray-700 hover:text-orange-600 font-semibold transition-colors"
+            >
               My Library
             </Link>
           </div>
 
-          {/* Wallet button removed - focusing on core functionality */}
-          <div className="text-sm text-gray-500 italic">
-            Wallet connection coming soon
+          {/* Wallet Button */}
+          <div className="flex items-center">
+            <WalletButton />
           </div>
         </div>
       </div>
