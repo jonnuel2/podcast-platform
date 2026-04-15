@@ -1,6 +1,5 @@
 "use client";
 
-import type { Metadata } from "next";
 import "./globals.css";
 import { AptosWalletAdapterProvider } from "@aptos-labs/wallet-adapter-react";
 import { PetraWallet } from "petra-plugin-wallet-adapter";
