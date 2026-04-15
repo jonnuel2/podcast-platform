@@ -5,7 +5,7 @@ import { ShelbyNodeClient } from "@shelby-protocol/sdk/node";
 const SHELBY_CONFIG = {
   apiKey: process.env.NEXT_PUBLIC_SHELBY_API_KEY || '',
   privateKey: process.env.SHELBY_ACCOUNT_PRIVATE_KEY || '',
-  network: Network.SHELBYNET,
+  network: Network.SHELBYNET as Network.SHELBYNET,
 };
 
 // Initialize Shelby client
