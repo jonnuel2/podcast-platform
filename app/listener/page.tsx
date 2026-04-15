@@ -268,8 +268,7 @@ export default function ListenerDashboard() {
       {/* Audio Player */}
       {currentlyPlaying && (
         <AudioPlayer
-          audioUrl={currentlyPlaying.audioUrl}
-          title={currentlyPlaying.title}
+          episode={currentlyPlaying}
           onClose={() => setCurrentlyPlaying(null)}
         />
       )}
