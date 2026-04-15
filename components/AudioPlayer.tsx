@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 interface Episode {
-  id: string;
+  id: string | number;
   title: string;
   audioUrl: string;
 }
