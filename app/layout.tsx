@@ -16,10 +16,10 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased font-sans">
         <AptosWalletAdapterProvider
-          plugins={wallets}
+          wallets={wallets}
           autoConnect={true}
-          dappConfig={{
-            network: Network.MAINNET,
+          onError={(error) => {
+            console.log("Wallet error:", error);
           }}
         >
           {children}
