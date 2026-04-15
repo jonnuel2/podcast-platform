@@ -13,6 +13,7 @@
     "@aptos-labs/wallet-adapter-ant-design": "^5.3.19",
     "@aptos-labs/wallet-adapter-react": "^8.3.3",
     "@shelby-protocol/sdk": "^0.3.0",
+    "@supabase/supabase-js": "^2.103.2",
     "next": "16.2.3",
     "petra-plugin-wallet-adapter": "^0.4.5",
     "react": "19.2.4",
