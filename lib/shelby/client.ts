@@ -55,20 +55,27 @@ export async function uploadToShelby(
     const client = getShelbyClient();
     const signerAccount = getSigner();
     
+    console.log('🔹 Starting upload to Shelby...');
+    console.log('🔹 Blob name:', blobName);
+    console.log('🔹 Signer address:', signerAccount.accountAddress.toString());
+    
     // Convert File to Buffer
     const arrayBuffer = await file.arrayBuffer();
     const blobData = new Uint8Array(arrayBuffer);
     
+    console.log('🔹 File size:', blobData.length, 'bytes');
+    
     // Upload to Shelby (1 hour expiration)
     const TIME_TO_LIVE = 60 * 60 * 1_000_000; // 1 hour in microseconds
     
-    await client.upload({
+    const uploadResult = await client.upload({
       blobData,
       signer: signerAccount,
       blobName,
       expirationMicros: Date.now() * 1000 + TIME_TO_LIVE,
     });
     
+    console.log('✅ Upload result:', uploadResult);
     console.log('✅ Uploaded to Shelby:', blobName);
     
     // Return success
@@ -77,9 +84,17 @@ export async function uploadToShelby(
       url: `https://api.shelbynet.shelby.xyz/shelby/v1/blobs/${signerAccount.accountAddress}/${blobName}`,
       size: file.size,
     };
-  } catch (error) {
-    console.error('❌ Shelby upload error:', error);
-    throw new Error(`Failed to upload to Shelby: ${error}`);
+  } catch (error: any) {
+    console.error('❌ Shelby upload error (full):', error);
+    console.error('❌ Error message:', error.message);
+    console.error('❌ Error stack:', error.stack);
+    
+    // Try to parse if it's a JSON error
+    if (error.message && error.message.includes('JSON')) {
+      console.error('❌ This is a JSON parsing error - the API returned invalid JSON');
+    }
+    
+    throw new Error(`Failed to upload to Shelby: ${error.message || error}`);
   }
 }
 
@@ -92,6 +107,7 @@ export function getShelbyUrl(blobName: string, accountAddress: string): string {
 export function isShelbyConfigured(): boolean {
   return !!(SHELBY_CONFIG.apiKey && SHELBY_CONFIG.privateKey);
 }
+
 // Delete blob from Shelby (stub for now)
 export async function deleteFromShelby(blobName: string): Promise<void> {
   console.warn('⚠️ Delete from Shelby not implemented yet');
