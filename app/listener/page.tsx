@@ -6,7 +6,7 @@ import { Navbar } from "@/components/Navbar";
 import { AudioPlayer } from "@/components/AudioPlayer";
 
 interface Episode {
-  id: number;
+  id: string | number;
   title: string;
   podcast: string;
   creator: string;
