@@ -112,7 +112,7 @@ export const storageV2 = {
   // Get audio URL (handles both localStorage and Shelby)
   getAudioUrl(episode: Episode): string {
     if (episode.storageType === 'shelby' && episode.cid) {
-      return getShelbyUrl(episode.cid);
+      return episode.audioUrl;
     }
     return episode.audioUrl;
   }
