@@ -92,3 +92,8 @@ export function getShelbyUrl(blobName: string, accountAddress: string): string {
 export function isShelbyConfigured(): boolean {
   return !!(SHELBY_CONFIG.apiKey && SHELBY_CONFIG.privateKey);
 }
+// Delete blob from Shelby (stub for now)
+export async function deleteFromShelby(blobName: string): Promise<void> {
+  console.warn('⚠️ Delete from Shelby not implemented yet');
+  // TODO: Implement blob deletion when Shelby SDK supports it
+}
