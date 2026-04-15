@@ -2,10 +2,6 @@
 
 import "./globals.css";
 import { AptosWalletAdapterProvider } from "@aptos-labs/wallet-adapter-react";
-import { PetraWallet } from "petra-plugin-wallet-adapter";
-import { Network } from "@aptos-labs/ts-sdk";
-
-const wallets = [new PetraWallet()];
 
 export default function RootLayout({
   children,
@@ -15,13 +11,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased font-sans">
-        <AptosWalletAdapterProvider
-          wallets={wallets}
-          autoConnect={true}
-          onError={(error) => {
-            console.log("Wallet error:", error);
-          }}
-        >
+        <AptosWalletAdapterProvider>
           {children}
         </AptosWalletAdapterProvider>
       </body>
