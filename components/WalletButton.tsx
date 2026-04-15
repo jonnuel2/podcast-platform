@@ -7,10 +7,12 @@ export function WalletButton() {
   const { connected, account, disconnect } = useWallet();
 
   if (connected && account) {
+    const addressString = account.address.toString();
+    
     return (
       <div className="flex items-center gap-3">
         <div className="bg-green-100 text-green-700 px-4 py-2 rounded-lg font-semibold text-sm">
-          {account.address.slice(0, 6)}...{account.address.slice(-4)}
+          {addressString.slice(0, 6)}...{addressString.slice(-4)}
         </div>
         <button
           onClick={disconnect}
