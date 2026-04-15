@@ -4,6 +4,7 @@ import { useState } from "react";
 
 export function PodcastUploader() {
   const [title, setTitle] = useState("");
+  const [podcast, setPodcast] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("0.01");
   const [audioFile, setAudioFile] = useState<File | null>(null);
@@ -12,7 +13,7 @@ export function PodcastUploader() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title || !description || !audioFile) {
+    if (!title || !podcast || !description || !audioFile) {
       alert("Please fill in all fields and select an audio file");
       return;
     }
@@ -25,6 +26,7 @@ export function PodcastUploader() {
       // Create form data
       const formData = new FormData();
       formData.append('title', title);
+      formData.append('podcast', podcast);
       formData.append('description', description);
       formData.append('price', price);
       formData.append('file', audioFile);
@@ -57,6 +59,7 @@ export function PodcastUploader() {
 
       // Reset form
       setTitle("");
+      setPodcast("");
       setDescription("");
       setPrice("0.01");
       setAudioFile(null);
@@ -74,6 +77,21 @@ export function PodcastUploader() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Podcast Name / Category */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Podcast Name <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          value={podcast}
+          onChange={(e) => setPodcast(e.target.value)}
+          placeholder="e.g., Tech Talks Daily, The Crypto Corner"
+          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-orange-500 focus:outline-none"
+          required
+        />
+      </div>
+
       {/* Episode Title */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -92,7 +110,7 @@ export function PodcastUploader() {
       {/* Description */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Description
+          Description <span className="text-red-500">*</span>
         </label>
         <textarea
           value={description}
@@ -100,6 +118,7 @@ export function PodcastUploader() {
           placeholder="Describe your episode..."
           rows={4}
           className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-orange-500 focus:outline-none resize-none"
+          required
         />
       </div>
 
@@ -136,7 +155,7 @@ export function PodcastUploader() {
               ✓ Selected: {audioFile.name} ({(audioFile.size / 1024 / 1024).toFixed(2)} MB)
             </p>
             <p className="text-xs text-gray-500 mt-1">
-              🚀 No size limit with Shelby! Upload files of any size.
+              ⚠️ For best results on Vercel Free plan, keep files under 4MB for now.
             </p>
           </div>
         )}
@@ -157,7 +176,7 @@ export function PodcastUploader() {
 
       {/* Info */}
       <p className="text-xs text-gray-500 text-center">
-        ✅ Uploading to Shelby decentralized storage - no size limits!
+        ✅ Uploading to Shelby decentralized storage
       </p>
     </form>
   );

@@ -9,11 +9,12 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     
     const title = formData.get('title') as string;
+    const podcast = formData.get('podcast') as string;
     const description = formData.get('description') as string;
     const price = formData.get('price') as string;
     const file = formData.get('file') as File;
     
-    if (!title || !file) {
+    if (!title || !podcast || !file) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -36,6 +37,8 @@ export async function POST(request: NextRequest) {
     const episode = {
       id: timestamp.toString(),
       title,
+      podcast: podcast || 'Uncategorized',
+      creator: 'Anonymous Creator', // You can get this from wallet address later
       description: description || '',
       price: parseFloat(price) || 0.01,
       audioUrl: result.url,
