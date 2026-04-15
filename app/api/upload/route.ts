@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { uploadToShelby } from '@/lib/shelby/client';
 
 // Use Edge Runtime for larger payload support (50MB limit instead of 4.5MB)
-export const runtime = 'edge';
 
 export async function POST(request: NextRequest) {
   try {
