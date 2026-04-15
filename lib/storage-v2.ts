@@ -33,8 +33,8 @@ export const storageV2 = {
     if (useShelby) {
       // Upload to Shelby (production mode)
       try {
-        const result = await uploadToShelby(audioFile);
-        audioUrl = result.url;
+        const blobName = `podcasts/${title.replace(/[^a-zA-Z0-9]/g, '_')}_${Date.now()}.mp3`;
+        const result = await uploadToShelby(audioFile, blobName);
         cid = result.cid;
         storageType = 'shelby';
         console.log('✅ Uploaded to Shelby:', cid);
