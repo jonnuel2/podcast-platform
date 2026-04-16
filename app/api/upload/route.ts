@@ -9,10 +9,11 @@ export async function POST(request: NextRequest) {
     const title = formData.get('title') as string;
     const podcast = formData.get('podcast') as string;
     const description = formData.get('description') as string;
+    const category = formData.get('category') as string;
     const price = formData.get('price') as string;
     const file = formData.get('file') as File;
     
-    if (!title || !podcast || !file) {
+    if (!title || !podcast || !category || !file) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -37,6 +38,7 @@ export async function POST(request: NextRequest) {
       podcast: podcast || 'Uncategorized',
       creator: 'Anonymous Creator',
       description: description || '',
+      category: category,
       price: parseFloat(price) || 0.01,
       audio_url: result.url,
       cid: result.cid,

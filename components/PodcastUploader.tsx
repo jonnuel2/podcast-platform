@@ -10,6 +10,7 @@ export function PodcastUploader({ onUploadSuccess }: PodcastUploaderProps) {
   const [title, setTitle] = useState("");
   const [podcast, setPodcast] = useState("");
   const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
   const [price, setPrice] = useState("0.01");
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -17,7 +18,7 @@ export function PodcastUploader({ onUploadSuccess }: PodcastUploaderProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title || !podcast || !description || !audioFile) {
+    if (!title || !podcast || !description || !category || !audioFile) {
       alert("Please fill in all fields and select an audio file");
       return;
     }
@@ -32,6 +33,7 @@ export function PodcastUploader({ onUploadSuccess }: PodcastUploaderProps) {
       formData.append('title', title);
       formData.append('podcast', podcast);
       formData.append('description', description);
+      formData.append('category', category);
       formData.append('price', price);
       formData.append('file', audioFile);
 
@@ -60,6 +62,7 @@ export function PodcastUploader({ onUploadSuccess }: PodcastUploaderProps) {
       setTitle("");
       setPodcast("");
       setDescription("");
+      setCategory("");
       setPrice("0.01");
       setAudioFile(null);
 
@@ -78,7 +81,7 @@ export function PodcastUploader({ onUploadSuccess }: PodcastUploaderProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Podcast Name / Category */}
+      {/* Podcast Name */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Podcast Name <span className="text-red-500">*</span>
@@ -121,6 +124,33 @@ export function PodcastUploader({ onUploadSuccess }: PodcastUploaderProps) {
           className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-orange-500 focus:outline-none resize-none"
           required
         />
+      </div>
+
+      {/* Category */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Category <span className="text-red-500">*</span>
+        </label>
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-orange-500 focus:outline-none"
+          required
+        >
+          <option value="">Select a category...</option>
+          <option value="Technology">Technology</option>
+          <option value="Business">Business</option>
+          <option value="Health & Fitness">Health & Fitness</option>
+          <option value="Arts & Entertainment">Arts & Entertainment</option>
+          <option value="Education">Education</option>
+          <option value="News & Politics">News & Politics</option>
+          <option value="Comedy">Comedy</option>
+          <option value="Sports">Sports</option>
+          <option value="Science">Science</option>
+          <option value="Music">Music</option>
+          <option value="True Crime">True Crime</option>
+          <option value="Society & Culture">Society & Culture</option>
+        </select>
       </div>
 
       {/* Price */}

@@ -25,6 +25,7 @@ export default function BrowsePodcasts() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [sortBy, setSortBy] = useState("newest");
 
   // Fetch episodes from Supabase
   useEffect(() => {
@@ -75,7 +76,28 @@ export default function BrowsePodcasts() {
     avgPrice: eps.reduce((sum, ep) => sum + ep.price, 0) / eps.length,
     totalListens: eps.reduce((sum, ep) => sum + ep.listens, 0),
     creator: eps[0].creator,
+    latestDate: eps[0].created_at,
   }));
+
+  // Sort podcasts
+  const sortedPodcasts = [...podcasts].sort((a, b) => {
+    switch (sortBy) {
+      case "newest":
+        return new Date(b.latestDate).getTime() - new Date(a.latestDate).getTime();
+      case "oldest":
+        return new Date(a.latestDate).getTime() - new Date(b.latestDate).getTime();
+      case "most_listened":
+        return b.totalListens - a.totalListens;
+      case "price_low":
+        return a.avgPrice - b.avgPrice;
+      case "price_high":
+        return b.avgPrice - a.avgPrice;
+      case "alphabetical":
+        return a.name.localeCompare(b.name);
+      default:
+        return 0;
+    }
+  });
 
   const colorOptions = [
     'from-blue-500 to-purple-600',
@@ -123,32 +145,52 @@ export default function BrowsePodcasts() {
                 <span className="absolute right-6 top-1/2 -translate-y-1/2 text-2xl">🔍</span>
               </div>
 
-              {/* Category Filter */}
-              <div className="flex gap-3 overflow-x-auto pb-2">
-                {categories.map((category) => (
-                  <button
-                    key={category}
-                    onClick={() => setSelectedCategory(category)}
-                    className={`px-6 py-3 rounded-lg font-semibold whitespace-nowrap transition-all ${
-                      selectedCategory === category
-                        ? "bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg"
-                        : "bg-white text-gray-700 hover:bg-gray-100 border-2 border-gray-200"
-                    }`}
+              {/* Category Filter & Sort By */}
+              <div className="flex flex-wrap items-center gap-4">
+                {/* Category Buttons */}
+                <div className="flex gap-3 overflow-x-auto pb-2 flex-1">
+                  {categories.map((category) => (
+                    <button
+                      key={category}
+                      onClick={() => setSelectedCategory(category)}
+                      className={`px-6 py-3 rounded-lg font-semibold whitespace-nowrap transition-all ${
+                        selectedCategory === category
+                          ? "bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg"
+                          : "bg-white text-gray-700 hover:bg-gray-100 border-2 border-gray-200"
+                      }`}
+                    >
+                      {category}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Sort By Dropdown */}
+                <div className="flex items-center gap-3">
+                  <label className="text-sm font-semibold text-gray-700 whitespace-nowrap">Sort by:</label>
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-orange-500 focus:outline-none font-semibold bg-white"
                   >
-                    {category}
-                  </button>
-                ))}
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="most_listened">Most Listened</option>
+                    <option value="price_low">Price: Low to High</option>
+                    <option value="price_high">Price: High to Low</option>
+                    <option value="alphabetical">A-Z</option>
+                  </select>
+                </div>
               </div>
             </div>
 
             {/* Results Count */}
             <p className="text-gray-600 mb-6">
-              Showing <span className="font-bold text-orange-600">{podcasts.length}</span> podcasts
+              Showing <span className="font-bold text-orange-600">{sortedPodcasts.length}</span> podcasts
             </p>
 
             {/* Podcast Grid */}
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {podcasts.map((podcast, idx) => (
+              {sortedPodcasts.map((podcast, idx) => (
                 <div
                   key={podcast.name}
                   className="group bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all transform hover:-translate-y-2 cursor-pointer border-2 border-transparent hover:border-orange-500"
@@ -216,7 +258,7 @@ export default function BrowsePodcasts() {
             </div>
 
             {/* No Results */}
-            {podcasts.length === 0 && (
+            {sortedPodcasts.length === 0 && (
               <div className="text-center py-20">
                 <div className="text-6xl mb-4">📭</div>
                 <h3 className="text-2xl font-bold text-gray-800 mb-2">No podcasts found</h3>

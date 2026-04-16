@@ -27,10 +27,10 @@ export default function Home() {
     }
   ];
 
-  // Auto-rotate hero carousel
+  // Auto-rotate hero carousel (2 images only)
   useEffect(() => {
     const heroTimer = setInterval(() => {
-      setCurrentHeroSlide((prev) => (prev + 1) % 3); // 3 podcaster images
+      setCurrentHeroSlide((prev) => (prev + 1) % 2); // 2 podcaster images
     }, 5000); // Change every 5 seconds
     return () => clearInterval(heroTimer);
   }, []);
@@ -141,25 +141,11 @@ export default function Home() {
                     className="object-cover"
                   />
                 </div>
-
-                {/* Image 3 */}
-                <div
-                  className={`absolute inset-0 transition-opacity duration-1000 ${
-                    currentHeroSlide === 2 ? 'opacity-100' : 'opacity-0'
-                  }`}
-                >
-                  <Image
-                    src="/assets/images/podcaster3.png"
-                    alt="Podcaster 3"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
               </div>
 
               {/* Carousel Dots */}
               <div className="flex justify-center gap-3 mt-6">
-                {[0, 1, 2].map((index) => (
+                {[0, 1].map((index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentHeroSlide(index)}
