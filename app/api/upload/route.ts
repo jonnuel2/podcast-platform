@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { uploadToShelby } from '@/lib/shelby/client';
-
-// Use Edge Runtime for larger payload support (50MB limit instead of 4.5MB)
+import { createClient } from '@supabase/supabase-js';
 
 export async function POST(request: NextRequest) {
   try {
@@ -32,26 +31,44 @@ export async function POST(request: NextRequest) {
 
     console.log('Server: Upload successful!', result);
 
-    // Create episode object
+    // Create episode object for Supabase
     const episode = {
-      id: timestamp.toString(),
       title,
       podcast: podcast || 'Uncategorized',
-      creator: 'Anonymous Creator', // You can get this from wallet address later
+      creator: 'Anonymous Creator',
       description: description || '',
       price: parseFloat(price) || 0.01,
-      audioUrl: result.url,
-      uploadDate: new Date().toISOString(),
-      listens: 0,
-      earnings: 0,
+      audio_url: result.url,
       cid: result.cid,
       size: result.size,
+      listens: 0,
+      earnings: 0,
     };
+
+    // Save to Supabase
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+    console.log('💾 Saving to Supabase...');
+
+    const { data, error } = await supabase
+      .from('episodes')
+      .insert([episode])
+      .select()
+      .single();
+
+    if (error) {
+      console.error('❌ Supabase error:', error);
+      throw new Error(`Failed to save episode: ${error.message}`);
+    }
+
+    console.log('✅ Episode saved to Supabase!', data);
 
     // Return episode data
     return NextResponse.json({
       success: true,
-      episode: episode,
+      episode: data,
       cid: result.cid,
       url: result.url,
       size: result.size,

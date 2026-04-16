@@ -204,9 +204,12 @@ export default function BrowsePodcasts() {
                     </div>
 
                     {/* CTA Button */}
-                    <button className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded-lg font-bold hover:from-orange-600 hover:to-red-600 transition-all">
+                    <Link
+                      href={`/podcast/${encodeURIComponent(podcast.name)}`}
+                      className="block w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded-lg font-bold hover:from-orange-600 hover:to-red-600 transition-all text-center"
+                    >
                       View Episodes →
-                    </button>
+                    </Link>
                   </div>
                 </div>
               ))}

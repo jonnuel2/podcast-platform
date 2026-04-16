@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 interface Episode {
   id: string | number;
   title: string;
-  audioUrl: string;
+  audio_url: string;
 }
 
 export function AudioPlayer({
@@ -23,9 +23,9 @@ export function AudioPlayer({
 
   // Load and play audio when episode changes
   useEffect(() => {
-    if (audioRef.current && episode.audioUrl) {
+    if (audioRef.current && episode.audio_url) {
       // Proxy the Shelby URL through our API to handle CORS
-      const proxyUrl = `/api/proxy-audio?url=${encodeURIComponent(episode.audioUrl)}`;
+      const proxyUrl = `/api/proxy-audio?url=${encodeURIComponent(episode.audio_url)}`;
       audioRef.current.src = proxyUrl;
       audioRef.current.load();
       
@@ -37,7 +37,7 @@ export function AudioPlayer({
           // Silently fail - the audio might still load
       });
     }
-  }, [episode.audioUrl]);
+  }, [episode.audio_url]);
 
   // Update time
   useEffect(() => {
