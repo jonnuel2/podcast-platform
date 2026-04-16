@@ -1,23 +1,52 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { PodcastUploader } from "@/components/PodcastUploader";
-import { EpisodeList } from "@/components/EpisodeList";
 import { AudioPlayer } from "@/components/AudioPlayer";
+import { supabase } from "@/lib/supabase";
 
 interface Episode {
   id: string;
   title: string;
+  podcast: string;
+  creator: string;
   description: string;
+  price: number;
   audio_url: string;
-  uploadDate: string;
+  cid: string;
+  size: number;
   listens: number;
   earnings: number;
+  created_at: string;
 }
 
 export default function CreatorPage() {
+  const [episodes, setEpisodes] = useState<Episode[]>([]);
+  const [loading, setLoading] = useState(true);
   const [currentEpisode, setCurrentEpisode] = useState<Episode | null>(null);
+
+  // Fetch episodes from Supabase
+  useEffect(() => {
+    fetchEpisodes();
+  }, []);
+
+  const fetchEpisodes = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('episodes')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      setEpisodes(data || []);
+    } catch (error) {
+      console.error('Error fetching episodes:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handlePlay = (episode: Episode) => {
     setCurrentEpisode(episode);
@@ -25,6 +54,33 @@ export default function CreatorPage() {
 
   const handleClose = () => {
     setCurrentEpisode(null);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this episode?")) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('episodes')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      // Remove from local state
+      setEpisodes(episodes.filter(ep => ep.id !== id));
+      alert('Episode deleted successfully!');
+    } catch (error: any) {
+      console.error('Error deleting episode:', error);
+      alert(`Failed to delete episode: ${error.message}`);
+    }
+  };
+
+  const handleUploadSuccess = () => {
+    // Refresh episodes after successful upload
+    fetchEpisodes();
   };
 
   return (
@@ -44,7 +100,7 @@ export default function CreatorPage() {
 
         {/* Upload Section */}
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-12">
-          <PodcastUploader />
+          <PodcastUploader onUploadSuccess={handleUploadSuccess} />
         </div>
 
         {/* Episodes Section */}
@@ -52,7 +108,57 @@ export default function CreatorPage() {
           <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
             🎙️ Your Episodes
           </h2>
-          <EpisodeList onPlay={handlePlay} />
+          
+          {loading ? (
+            <div className="text-center py-12 text-gray-500">
+              Loading episodes...
+            </div>
+          ) : episodes.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              No episodes yet. Upload your first episode above!
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {episodes.map((episode) => (
+                <div
+                  key={episode.id}
+                  className="bg-white border-2 border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow"
+                >
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">
+                        {episode.title}
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-2">
+                        Podcast: {episode.podcast}
+                      </p>
+                      <p className="text-gray-600 text-sm mb-4">{episode.description}</p>
+                      <div className="flex gap-6 text-sm text-gray-500">
+                        <span>💰 {episode.price} APT</span>
+                        <span>👂 {episode.listens} listens</span>
+                        <span>📅 {new Date(episode.created_at).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => handlePlay(episode)}
+                      className="flex-1 bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-lg font-semibold hover:from-orange-600 hover:to-red-600 transition-all"
+                    >
+                      ▶️ Play
+                    </button>
+                    <button
+                      onClick={() => handleDelete(episode.id)}
+                      className="bg-red-100 text-red-600 px-6 py-3 rounded-lg font-semibold hover:bg-red-200 transition-all"
+                    >
+                      🗑️ Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </main>
 

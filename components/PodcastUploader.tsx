@@ -2,7 +2,11 @@
 
 import { useState } from "react";
 
-export function PodcastUploader() {
+interface PodcastUploaderProps {
+  onUploadSuccess?: () => void;
+}
+
+export function PodcastUploader({ onUploadSuccess }: PodcastUploaderProps) {
   const [title, setTitle] = useState("");
   const [podcast, setPodcast] = useState("");
   const [description, setDescription] = useState("");
@@ -45,15 +49,10 @@ export function PodcastUploader() {
 
       console.log('✅ Upload successful!', result);
 
-      // Save episode to localStorage
-      const episodes = JSON.parse(localStorage.getItem('episodes') || '[]');
-      episodes.push(result.episode);
-      localStorage.setItem('episodes', JSON.stringify(episodes));
-
       // Show success
       alert(
-        `✅ Episode "${title}" uploaded to Shelby!\n\n` +
-        `CID: ${result.episode.cid}\n` +
+        `✅ Episode "${title}" uploaded successfully!\n\n` +
+        `CID: ${result.cid}\n` +
         `Size: ${(audioFile.size / 1024 / 1024).toFixed(2)}MB`
       );
 
@@ -64,8 +63,10 @@ export function PodcastUploader() {
       setPrice("0.01");
       setAudioFile(null);
 
-      // Refresh page to show new episode
-      window.location.reload();
+      // Trigger callback to refresh episode list
+      if (onUploadSuccess) {
+        onUploadSuccess();
+      }
 
     } catch (error: any) {
       console.error("Upload error:", error);
