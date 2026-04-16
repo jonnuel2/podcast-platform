@@ -10,7 +10,7 @@ interface Episode {
   id: string;
   title: string;
   description: string;
-  audioUrl: string;
+  audio_Url: string;
   uploadDate: string;
   listens: number;
   earnings: number;
