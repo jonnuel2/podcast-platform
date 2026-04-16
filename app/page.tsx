@@ -6,7 +6,8 @@ import { Navbar } from "@/components/Navbar";
 import { useState, useEffect } from "react";
 
 export default function Home() {
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentHeroSlide, setCurrentHeroSlide] = useState(0);
+  const [currentTestimonialSlide, setCurrentTestimonialSlide] = useState(0);
 
   const testimonials = [
     {
@@ -26,19 +27,27 @@ export default function Home() {
     }
   ];
 
+  // Auto-rotate hero carousel
+  useEffect(() => {
+    const heroTimer = setInterval(() => {
+      setCurrentHeroSlide((prev) => (prev + 1) % 3); // 3 podcaster images
+    }, 5000); // Change every 5 seconds
+    return () => clearInterval(heroTimer);
+  }, []);
+
   // Auto-rotate testimonials
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % testimonials.length);
+    const testimonialTimer = setInterval(() => {
+      setCurrentTestimonialSlide((prev) => (prev + 1) % testimonials.length);
     }, 4000);
-    return () => clearInterval(timer);
+    return () => clearInterval(testimonialTimer);
   }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-500 via-orange-500 to-orange-400">
       <Navbar />
 
-      {/* Hero Section with Podcaster Image */}
+      {/* Hero Section with Podcaster Carousel */}
       <section className="relative w-full overflow-hidden min-h-[700px] flex items-center">
         <div className="w-full flex items-center justify-between px-12 py-20">
           {/* LEFT - Content */}
@@ -100,16 +109,68 @@ export default function Home() {
             </div>
           </div>
 
-          {/* RIGHT - Podcaster Image with Curved Edges */}
+          {/* RIGHT - Podcaster Carousel with Curved Edges */}
           <div className="w-1/2 flex justify-end pr-12">
-            <div className="relative w-[500px] h-[600px] rounded-[3rem] overflow-hidden shadow-2xl">
-              <Image
-                src="/assets/images/podcaster.png"
-                alt="Podcaster"
-                fill
-                className="object-cover"
-                priority
-              />
+            <div className="relative">
+              <div className="relative w-[500px] h-[600px] rounded-[3rem] overflow-hidden shadow-2xl">
+                {/* Image 1 */}
+                <div
+                  className={`absolute inset-0 transition-opacity duration-1000 ${
+                    currentHeroSlide === 0 ? 'opacity-100' : 'opacity-0'
+                  }`}
+                >
+                  <Image
+                    src="/assets/images/podcaster.png"
+                    alt="Podcaster 1"
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                </div>
+
+                {/* Image 2 */}
+                <div
+                  className={`absolute inset-0 transition-opacity duration-1000 ${
+                    currentHeroSlide === 1 ? 'opacity-100' : 'opacity-0'
+                  }`}
+                >
+                  <Image
+                    src="/assets/images/podcaster2.png"
+                    alt="Podcaster 2"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+
+                {/* Image 3 */}
+                <div
+                  className={`absolute inset-0 transition-opacity duration-1000 ${
+                    currentHeroSlide === 2 ? 'opacity-100' : 'opacity-0'
+                  }`}
+                >
+                  <Image
+                    src="/assets/images/podcaster3.png"
+                    alt="Podcaster 3"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              </div>
+
+              {/* Carousel Dots */}
+              <div className="flex justify-center gap-3 mt-6">
+                {[0, 1, 2].map((index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentHeroSlide(index)}
+                    className={`w-3 h-3 rounded-full transition-all ${
+                      index === currentHeroSlide
+                        ? 'bg-white w-8'
+                        : 'bg-white/50 hover:bg-white/70'
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -153,9 +214,9 @@ export default function Home() {
               <div
                 key={index}
                 className={`absolute inset-0 transition-all duration-700 transform ${
-                  index === currentSlide
+                  index === currentTestimonialSlide
                     ? 'opacity-100 translate-x-0'
-                    : index < currentSlide
+                    : index < currentTestimonialSlide
                     ? 'opacity-0 -translate-x-full'
                     : 'opacity-0 translate-x-full'
                 }`}
@@ -180,9 +241,9 @@ export default function Home() {
             {testimonials.map((_, index) => (
               <button
                 key={index}
-                onClick={() => setCurrentSlide(index)}
+                onClick={() => setCurrentTestimonialSlide(index)}
                 className={`w-3 h-3 rounded-full transition-all ${
-                  index === currentSlide
+                  index === currentTestimonialSlide
                     ? 'bg-orange-500 w-8'
                     : 'bg-gray-500 hover:bg-gray-400'
                 }`}
