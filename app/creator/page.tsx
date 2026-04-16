@@ -5,6 +5,7 @@ import { Navbar } from "@/components/Navbar";
 import { PodcastUploader } from "@/components/PodcastUploader";
 import { AudioPlayer } from "@/components/AudioPlayer";
 import { supabase } from "@/lib/supabase";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 
 interface Episode {
   id: string;
@@ -22,6 +23,7 @@ interface Episode {
 }
 
 export default function CreatorPage() {
+  const { account } = useWallet();
   const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentEpisode, setCurrentEpisode] = useState<Episode | null>(null);
@@ -56,7 +58,18 @@ export default function CreatorPage() {
     setCurrentEpisode(null);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, episodeCreator: string) => {
+    // Check if user owns this episode
+    if (!account) {
+      alert("Please connect your wallet first!");
+      return;
+    }
+
+    if (String(account.address).toLowerCase() !== episodeCreator.toLowerCase()) {
+      alert("You can only delete your own episodes!");
+      return;
+    }
+
     if (!confirm("Are you sure you want to delete this episode?")) {
       return;
     }
@@ -106,7 +119,7 @@ export default function CreatorPage() {
         {/* Episodes Section */}
         <div className="bg-white rounded-2xl shadow-lg p-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-            🎙️ Your Episodes
+            🎙️ All Episodes
           </h2>
           
           {loading ? (
@@ -137,6 +150,9 @@ export default function CreatorPage() {
                         <span>💰 {episode.price} APT</span>
                         <span>👂 {episode.listens} listens</span>
                         <span>📅 {new Date(episode.created_at).toLocaleDateString()}</span>
+                        <span className="text-blue-600">
+                          👤 {episode.creator.substring(0, 6)}...{episode.creator.substring(episode.creator.length - 4)}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -148,12 +164,14 @@ export default function CreatorPage() {
                     >
                       ▶️ Play
                     </button>
-                    <button
-                      onClick={() => handleDelete(episode.id)}
-                      className="bg-red-100 text-red-600 px-6 py-3 rounded-lg font-semibold hover:bg-red-200 transition-all"
-                    >
-                      🗑️ Delete
-                    </button>
+                    {account && episode.creator.toLowerCase() === String(account.address).toLowerCase() && (
+                      <button
+                        onClick={() => handleDelete(episode.id, episode.creator)}
+                        className="bg-red-100 text-red-600 px-6 py-3 rounded-lg font-semibold hover:bg-red-200 transition-all"
+                      >
+                        🗑️ Delete
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}

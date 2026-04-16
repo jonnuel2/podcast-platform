@@ -11,6 +11,7 @@ export async function POST(request: NextRequest) {
     const description = formData.get('description') as string;
     const category = formData.get('category') as string;
     const price = formData.get('price') as string;
+    const thumbnail_url = formData.get('thumbnail_url') as string;
     const file = formData.get('file') as File;
     
     if (!title || !podcast || !category || !file) {
@@ -36,11 +37,12 @@ export async function POST(request: NextRequest) {
     const episode = {
       title,
       podcast: podcast || 'Uncategorized',
-      creator: 'Anonymous Creator',
+      creator: formData.get('creator') as string || 'Anonymous Creator',
       description: description || '',
       category: category,
       price: parseFloat(price) || 0.01,
       audio_url: result.url,
+      thumbnail_url: thumbnail_url || null,
       cid: result.cid,
       size: result.size,
       listens: 0,

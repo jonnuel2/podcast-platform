@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
+import Image from "next/image";
 
 interface Episode {
   id: string;
@@ -11,8 +12,10 @@ interface Episode {
   podcast: string;
   creator: string;
   description: string;
+  category: string;
   price: number;
   audio_url: string;
+  thumbnail_url: string | null;
   cid: string;
   size: number;
   listens: number;
@@ -49,14 +52,15 @@ export default function BrowsePodcasts() {
     }
   };
 
-  // Get unique podcast names for categories
-  const categories = ["All", ...Array.from(new Set(episodes.map(ep => ep.podcast)))];
+  // Get unique categories for filter
+  const uniqueCategories = Array.from(new Set(episodes.map(ep => ep.category).filter(Boolean)));
+  const categories = ["All", ...uniqueCategories];
 
   const filteredEpisodes = episodes.filter((episode) => {
     const matchesSearch = episode.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          episode.podcast.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          episode.creator.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === "All" || episode.podcast === selectedCategory;
+    const matchesCategory = selectedCategory === "All" || episode.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -77,6 +81,8 @@ export default function BrowsePodcasts() {
     totalListens: eps.reduce((sum, ep) => sum + ep.listens, 0),
     creator: eps[0].creator,
     latestDate: eps[0].created_at,
+    thumbnail: eps[0].thumbnail_url,
+    category: eps[0].category,
   }));
 
   // Sort podcasts
@@ -195,52 +201,72 @@ export default function BrowsePodcasts() {
                   key={podcast.name}
                   className="group bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all transform hover:-translate-y-2 cursor-pointer border-2 border-transparent hover:border-orange-500"
                 >
-                  {/* Cover Art */}
-                  <div className={`h-48 bg-gradient-to-br ${colorOptions[idx % 4]} flex items-center justify-center`}>
-                    <div className="text-white text-center">
-                      <div className="text-6xl mb-2">🎙️</div>
-                      <div className="text-2xl font-bold px-4">{podcast.name}</div>
-                    </div>
+                  {/* Cover Art - Thumbnail or Gradient */}
+                  <div className="relative h-48">
+                    {podcast.thumbnail ? (
+                      <Image
+                        src={podcast.thumbnail}
+                        alt={podcast.name}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className={`w-full h-full bg-gradient-to-br ${colorOptions[idx % 4]} flex items-center justify-center`}>
+                        <div className="text-white text-center">
+                          <div className="text-6xl mb-2">🎙️</div>
+                          <div className="text-2xl font-bold px-4">{podcast.name}</div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Category Badge */}
+                    {podcast.category && (
+                      <div className="absolute top-3 right-3 bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                        {podcast.category}
+                      </div>
+                    )}
                   </div>
 
                   {/* Podcast Info */}
                   <div className="p-6">
+                    {/* Podcast Title */}
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{podcast.name}</h3>
+
                     <div className="flex items-center gap-2 mb-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-gray-300 to-gray-400 rounded-full flex items-center justify-center text-white font-bold">
+                      <div className="w-8 h-8 bg-gradient-to-br from-gray-300 to-gray-400 rounded-full flex items-center justify-center text-white text-xs font-bold">
                         {podcast.creator.charAt(0)}
                       </div>
-                      <div>
-                        <p className="font-semibold text-gray-800">{podcast.creator}</p>
-                        <p className="text-sm text-gray-500">{podcast.name}</p>
-                      </div>
+                      <p className="text-sm text-gray-600">
+                        {podcast.creator.substring(0, 6)}...{podcast.creator.substring(podcast.creator.length - 4)}
+                      </p>
                     </div>
 
                     {/* Stats */}
                     <div className="grid grid-cols-3 gap-2 mb-4">
                       <div className="text-center bg-orange-50 rounded-lg py-2">
-                        <div className="text-sm text-gray-600">Episodes</div>
+                        <div className="text-xs text-gray-600">Episodes</div>
                         <div className="font-bold text-gray-800">{podcast.episodeCount}</div>
                       </div>
                       <div className="text-center bg-red-50 rounded-lg py-2">
-                        <div className="text-sm text-gray-600">Listens</div>
+                        <div className="text-xs text-gray-600">Listens</div>
                         <div className="font-bold text-gray-800">{podcast.totalListens}</div>
                       </div>
                       <div className="text-center bg-green-50 rounded-lg py-2">
-                        <div className="text-sm text-gray-600">Avg Price</div>
-                        <div className="font-bold text-gray-800">{podcast.avgPrice.toFixed(2)} APT</div>
+                        <div className="text-xs text-gray-600">Avg Price</div>
+                        <div className="font-bold text-gray-800">{podcast.avgPrice.toFixed(2)}</div>
                       </div>
                     </div>
 
                     {/* Episodes List */}
-                    <div className="mb-4 space-y-2">
-                      {podcast.episodes.slice(0, 3).map(ep => (
+                    <div className="mb-4 space-y-1">
+                      {podcast.episodes.slice(0, 2).map(ep => (
                         <div key={ep.id} className="text-sm text-gray-700 truncate">
                           • {ep.title}
                         </div>
                       ))}
-                      {podcast.episodeCount > 3 && (
+                      {podcast.episodeCount > 2 && (
                         <div className="text-xs text-gray-500">
-                          +{podcast.episodeCount - 3} more episodes
+                          +{podcast.episodeCount - 2} more
                         </div>
                       )}
                     </div>
