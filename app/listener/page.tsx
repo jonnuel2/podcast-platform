@@ -14,7 +14,7 @@ interface Episode {
   price: number;
   listened: boolean;
   progress: number;
-  audioUrl: string;
+  audio_url: string;
   coverColor: string;
 }
 
@@ -33,7 +33,7 @@ export default function ListenerDashboard() {
       price: 0.02,
       listened: false,
       progress: 0,
-      audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+      audio_url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
       coverColor: "from-blue-500 to-purple-600"
     },
     {
@@ -45,7 +45,7 @@ export default function ListenerDashboard() {
       price: 0.03,
       listened: true,
       progress: 100,
-      audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+      audio_url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
       coverColor: "from-green-500 to-teal-600"
     },
     {
@@ -57,7 +57,7 @@ export default function ListenerDashboard() {
       price: 0.01,
       listened: false,
       progress: 35,
-      audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+      audio_url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
       coverColor: "from-orange-500 to-red-600"
     }
   ];
@@ -72,7 +72,7 @@ export default function ListenerDashboard() {
       price: 0.025,
       listened: true,
       progress: 100,
-      audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+      audio_url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
       coverColor: "from-yellow-500 to-orange-600"
     },
     {
@@ -84,7 +84,7 @@ export default function ListenerDashboard() {
       price: 0.02,
       listened: true,
       progress: 100,
-      audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
+      audio_url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
       coverColor: "from-indigo-500 to-blue-600"
     }
   ];
