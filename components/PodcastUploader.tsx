@@ -69,7 +69,7 @@ export function PodcastUploader({ onUploadSuccess }: PodcastUploaderProps) {
       formData.append('description', description);
       formData.append('category', category);
       formData.append('price', price);
-      formData.append('creator', account.address);
+      formData.append('creator', String(account.address));
       if (thumbnailUrl) {
         formData.append('thumbnail_url', thumbnailUrl);
       }
