@@ -6,7 +6,7 @@ interface Episode {
   id: string;
   title: string;
   description: string;
-  audio_Url: string;
+  audio_url: string;
   uploadDate: string;
   listens: number;
   earnings: number;
