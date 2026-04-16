@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { supabase } from "@/lib/supabase";
+import Link from "next/link";
 
 interface Episode {
   id: string;
@@ -48,7 +49,7 @@ export default function BrowsePodcasts() {
   };
 
   // Get unique podcast names for categories
-  const categories = ["All", ...new Set(episodes.map(ep => ep.podcast))];
+  const categories = ["All", ...Array.from(new Set(episodes.map(ep => ep.podcast)))];
 
   const filteredEpisodes = episodes.filter((episode) => {
     const matchesSearch = episode.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -75,6 +76,13 @@ export default function BrowsePodcasts() {
     totalListens: eps.reduce((sum, ep) => sum + ep.listens, 0),
     creator: eps[0].creator,
   }));
+
+  const colorOptions = [
+    'from-blue-500 to-purple-600',
+    'from-green-500 to-teal-600',
+    'from-orange-500 to-red-600',
+    'from-pink-500 to-rose-600'
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-orange-50">
@@ -146,9 +154,7 @@ export default function BrowsePodcasts() {
                   className="group bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all transform hover:-translate-y-2 cursor-pointer border-2 border-transparent hover:border-orange-500"
                 >
                   {/* Cover Art */}
-                  <div className={`h-48 bg-gradient-to-br ${
-                    ['from-blue-500 to-purple-600', 'from-green-500 to-teal-600', 'from-orange-500 to-red-600', 'from-pink-500 to-rose-600'][idx % 4]
-                  } flex items-center justify-center`}>
+                  <div className={`h-48 bg-gradient-to-br ${colorOptions[idx % 4]} flex items-center justify-center`}>
                     <div className="text-white text-center">
                       <div className="text-6xl mb-2">🎙️</div>
                       <div className="text-2xl font-bold px-4">{podcast.name}</div>
@@ -212,12 +218,12 @@ export default function BrowsePodcasts() {
                 <div className="text-6xl mb-4">📭</div>
                 <h3 className="text-2xl font-bold text-gray-800 mb-2">No podcasts found</h3>
                 <p className="text-gray-600 mb-4">Be the first to upload an episode!</p>
-                
+                <Link
                   href="/creator"
                   className="inline-block bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-3 rounded-lg font-bold hover:from-orange-600 hover:to-red-600 transition-all"
                 >
                   Upload Episode
-                </a>
+                </Link>
               </div>
             )}
           </>
